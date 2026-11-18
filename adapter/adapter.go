@@ -209,6 +209,7 @@ func (p *Proxy) URLTest(ctx context.Context, url string, expectedStatus utils.In
 	start := time.Now()
 	instance, err := p.DialContext(ctx, &addr)
 	if err != nil {
+		log.Errorln("[DELAYDBG] dial %s via %s failed: %v", url, p.Name(), err)
 		return
 	}
 	defer func() {
@@ -251,6 +252,7 @@ func (p *Proxy) URLTest(ctx context.Context, url string, expectedStatus utils.In
 	resp, err := client.Do(req)
 
 	if err != nil {
+		log.Errorln("[DELAYDBG] http %s via %s failed: %v", url, p.Name(), err)
 		return
 	}
 
