@@ -12,13 +12,29 @@ import (
 	"github.com/metacubex/mihomo/component/resolver"
 	C "github.com/metacubex/mihomo/constant"
 
+	"github.com/metacubex/mihomo/log"
+
 	mieruclient "github.com/enfein/mieru/v3/apis/client"
 	mierucommon "github.com/enfein/mieru/v3/apis/common"
+	mierulog "github.com/enfein/mieru/v3/apis/log"
 	mierumodel "github.com/enfein/mieru/v3/apis/model"
 	mierutp "github.com/enfein/mieru/v3/apis/trafficpattern"
 	mierupb "github.com/enfein/mieru/v3/pkg/appctl/appctlpb"
 	"google.golang.org/protobuf/proto"
 )
+
+var mieruLogOnce sync.Once
+
+// enableMieruLogging forwards mieru internal log messages into the mihomo log
+// so a failing dial can be diagnosed instead of only surfacing as a timeout.
+func enableMieruLogging() {
+	mieruLogOnce.Do(func() {
+		mierulog.SetLevel("DEBUG")
+		mierulog.SetCallback(func(msg mierulog.Message) {
+			log.Debugln("[MIERU] %s %s", msg.Level, msg.Message)
+		})
+	})
+}
 
 type Mieru struct {
 	*Base
@@ -77,8 +93,11 @@ func (m *Mieru) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, 
 		return nil, err
 	}
 	addr := metadataToMieruNetAddrSpec(metadata)
+	log.Debugln("[MIERUDBG] %s dial: net=%s host=%q dstip=%s port=%d metaType=%v",
+		m.Name(), metadata.NetWork.String(), metadata.Host, metadata.DstIP, metadata.DstPort, metadata.Type)
 	c, err := m.client.DialContext(ctx, addr)
 	if err != nil {
+		log.Debugln("[MIERUDBG] %s dial error: %v", m.Name(), err)
 		return nil, fmt.Errorf("dial to %s failed: %w", addr, err)
 	}
 	return NewConn(c, m), nil
@@ -131,6 +150,7 @@ func (m *Mieru) ensureClientIsRunning() error {
 		return err
 	}
 
+	enableMieruLogging()
 	if err := m.client.Start(); err != nil {
 		return fmt.Errorf("failed to start mieru client: %w", err)
 	}
