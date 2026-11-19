@@ -3,6 +3,7 @@ module github.com/metacubex/mihomo
 go 1.20
 
 require (
+	github.com/andybalholm/cascadia v1.3.2
 	github.com/bahlo/generic-list-go v0.2.0
 	github.com/coreos/go-iptables v0.8.0
 	github.com/dlclark/regexp2 v1.12.0
@@ -68,6 +69,7 @@ require (
 require (
 	github.com/insomniacslk/dhcp v0.0.0-20250109001534-8abf58130905
 	github.com/klauspost/compress v1.17.9
+	github.com/lqqyt2423/go-mitmproxy v1.9.5
 	github.com/mdlayher/netlink v1.7.2
 	github.com/miekg/dns v1.1.63
 	github.com/oschwald/maxminddb-golang v1.12.0
@@ -103,6 +105,8 @@ require (
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/josharian/native v1.1.0 // indirect
 	github.com/jsimonetti/rtnetlink v1.4.0 // indirect
@@ -149,3 +153,5 @@ require (
 
 // for https://github.com/golang/protobuf/issues/1704
 replace google.golang.org/protobuf => github.com/metacubex/protobuf-go v0.0.0-20260306035419-7ceee0674686
+
+replace github.com/lqqyt2423/go-mitmproxy => ./third_party/go-mitmproxy
